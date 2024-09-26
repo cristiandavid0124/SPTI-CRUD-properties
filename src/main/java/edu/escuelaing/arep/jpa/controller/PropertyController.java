@@ -1,5 +1,7 @@
-package edu.escuelaing.arep.jpa;
+package edu.escuelaing.arep.jpa.controller;
 
+import edu.escuelaing.arep.jpa.entities.Property;
+import edu.escuelaing.arep.jpa.repositories.PropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
