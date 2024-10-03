@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/properties")
 public class PropertyController {
 
     private final PropertyRepository propertyRepository;
@@ -16,27 +17,27 @@ public class PropertyController {
     }
 
 
-    @GetMapping("/properties")
+    @GetMapping
     public Iterable<Property> getProperties() {
         return propertyRepository.findAll();
     }
 
-    @GetMapping("/property/{id}")
+    @GetMapping("/{id}")
     public Property getPropertyById(long id) {
         return propertyRepository.findById(id);
     }
 
-    @PostMapping("/property")
+    @PostMapping
     public Property saveProperty(@RequestBody Property property) {
         return propertyRepository.save(property);
     }
 
-    @DeleteMapping("/property/{id}")
+    @DeleteMapping("/{id}")
     public void deleteProperty(@PathVariable long id) {
         propertyRepository.deleteById(id);
     }
 
-    @PutMapping("/property/{id}")
+    @PutMapping("/{id}")
     public Property updateProperty(@PathVariable long id, @RequestBody Property property) {
         Property propertyToUpdate = propertyRepository.findById(id);
         if (propertyToUpdate == null) {

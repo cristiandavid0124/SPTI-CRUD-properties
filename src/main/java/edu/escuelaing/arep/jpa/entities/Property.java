@@ -34,6 +34,14 @@ public class Property {
                 id, address, price, size, description);
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getAddress() {
         return address;
     }

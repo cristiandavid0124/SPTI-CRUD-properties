@@ -4,163 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Property Management</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            padding: 20px;
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        async function fetchProperties() {
+            const response = await fetch('/properties');
+            const properties = await response.json();
+            const propertyList = document.getElementById('property-list');
+            propertyList.innerHTML = '';
+            properties.forEach(property => {
+                propertyList.innerHTML += `
+                    <li>
+                        <div class="property-info">
+                            <strong>Address:</strong> ${property.address} <br>
+                            <strong>Price:</strong> $${property.price} <br>
+                            <strong>Size:</strong> ${property.size} sqft <br>
+                            <strong>Description:</strong> ${property.description}
+                        </div>
+                        <div class="property-buttons">
+                            <button onclick="editProperty(${property.id})"><i class="fas fa-edit"></i> Edit</button>
+                            <button onclick="deleteProperty(${property.id})"><i class="fas fa-trash-alt"></i> Delete</button>
+                        </div>
+                    </li>
+                `;
+            });
         }
-        .property-list {
-            margin-top: 20px;
+
+        async function createProperty() {
+            const address = document.getElementById('address').value;
+            const price = document.getElementById('price').value;
+            const size = document.getElementById('size').value;
+            const description = document.getElementById('description').value;
+
+            await fetch('/properties', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address, price, size, description })
+            });
+            console.log(JSON.stringify({ address, price, size, description }));
+            fetchProperties();
+            document.querySelector("form").reset();
         }
-    </style>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+        async function editProperty(id) {
+            const newAddress = prompt("Enter new address:");
+            const newPrice = prompt("Enter new price:");
+            const newSize = prompt("Enter new size:");
+            const newDescription = prompt("Enter new description:");
+
+            await fetch(`/properties/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    address: newAddress,
+                    price: newPrice,
+                    size: newSize,
+                    description: newDescription
+                })
+            });
+            fetchProperties();
+        }
+
+        async function deleteProperty(id) {
+            await fetch(`/properties/${id}`, {
+                method: 'DELETE'
+            });
+            fetchProperties();
+        }
+
+        window.onload = fetchProperties;
+    </script>
 </head>
 <body>
+<h1>Property Management</h1>
 
-<div class="container">
-    <h1>Property Management</h1>
+<h2>Add Property</h2>
+<form onsubmit="event.preventDefault(); createProperty();">
+    <label for="address">Address:</label>
+    <input type="text" id="address" required>
+    <label for="price">Price:</label>
+    <input type="number" id="price" required>
+    <label for="size">Size (sqft):</label>
+    <input type="number" id="size" required>
+    <label for="description">Description:</label>
+    <input type="text" id="description" required>
+    <button type="submit">Add Property</button>
+</form>
 
-    <form id="propertyForm">
-        <div class="form-group">
-            <label for="address">Address</label>
-            <input type="text" class="form-control" id="address" required>
-        </div>
-        <div class="form-group">
-            <label for="price">Price</label>
-            <input type="number" class="form-control" id="price" required>
-        </div>
-        <div class="form-group">
-            <label for="size">Size (sq ft)</label>
-            <input type="number" class="form-control" id="size" required>
-        </div>
-        <div class="form-group">
-            <label for="description">Description</label>
-            <textarea class="form-control" id="description" rows="3" required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Add Property</button>
-    </form>
-
-    <div class="property-list" id="propertyList"></div>
-</div>
-
-<script>
-    $(document).ready(function() {
-        const propertyForm = $('#propertyForm');
-        const propertyList = $('#propertyList');
-
-        // Function to fetch and display properties
-        function fetchProperties() {
-            $.ajax({
-                url: '/properties',
-                method: 'GET',
-                success: function(properties) {
-                    propertyList.empty(); // Clear the property list
-                    properties.forEach(function(property) {
-                        const propertyItem = `
-                            <div class="card my-3">
-                                <div class="card-body">
-                                    <h5 class="card-title">${property.address}</h5>
-                                    <p class="card-text">Price: $${property.price} | Size: ${property.size} sq ft</p>
-                                    <p>${property.description}</p>
-                                    <button class="btn btn-info" onclick="editProperty(${property.id})">Edit</button>
-                                    <button class="btn btn-danger" onclick="deleteProperty(${property.id})">Delete</button>
-                                </div>
-                            </div>`;
-                        propertyList.append(propertyItem);
-                    });
-                },
-                error: function(err) {
-                    console.error('Error fetching properties:', err);
-                }
-            });
-        }
-
-        // Function to add a property
-        propertyForm.on('submit', function(e) {
-            e.preventDefault();
-
-            const property = {
-                address: $('#address').val(),
-                price: $('#price').val(),
-                size: $('#size').val(),
-                description: $('#description').val(),
-            };
-
-            $.ajax({
-                url: '/property',
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(property),
-                success: function() {
-                    propertyForm[0].reset(); // Reset the form
-                    fetchProperties(); // Refresh the property list
-                },
-                error: function(err) {
-                    console.error('Error adding property:', err);
-                }
-            });
-        });
-
-        // Function to delete a property
-        window.deleteProperty = function(id) {
-            $.ajax({
-                url: `/property/${id}`,
-                method: 'DELETE',
-                success: function() {
-                    fetchProperties(); // Refresh the property list
-                },
-                error: function(err) {
-                    console.error('Error deleting property:', err);
-                }
-            });
-        };
-
-        // Function to edit a property
-        window.editProperty = function(id) {
-            $.ajax({
-                url: `/property/${id}`,
-                method: 'GET',
-                success: function(property) {
-                    $('#address').val(property.address);
-                    $('#price').val(property.price);
-                    $('#size').val(property.size);
-                    $('#description').val(property.description);
-
-                    propertyForm.off('submit').on('submit', function(e) {
-                        e.preventDefault();
-                        const updatedProperty = {
-                            address: $('#address').val(),
-                            price: $('#price').val(),
-                            size: $('#size').val(),
-                            description: $('#description').val(),
-                        };
-
-                        $.ajax({
-                            url: `/property/${id}`,
-                            method: 'PUT',
-                            contentType: 'application/json',
-                            data: JSON.stringify(updatedProperty),
-                            success: function() {
-                                propertyForm[0].reset(); // Reset the form
-                                fetchProperties(); // Refresh the property list
-                                // Re-bind the original form submit handler
-                                propertyForm.off('submit').on('submit', arguments.callee);
-                            },
-                            error: function(err) {
-                                console.error('Error updating property:', err);
-                            }
-                        });
-                    });
-                },
-                error: function(err) {
-                    console.error('Error fetching property for edit:', err);
-                }
-            });
-        };
-
-        // Fetch properties on initial load
-        fetchProperties();
-    });
-</script>
+<h2>Property List</h2>
+<ul id="property-list"></ul>
 </body>
 </html>
