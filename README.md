@@ -21,6 +21,13 @@ To see the Property Management App in action, watch the following demonstration 
 
 [Demo video](https://github.com/user-attachments/assets/7d5e24b8-c285-41d6-9a72-313e9d4b1add)
 
+## Deployment Video
+
+For a detailed walkthrough of the deployment process, check out the deployment video below:
+
+[Despliege](https://github.com/user-attachments/assets/296fb95a-61c9-4693-8da9-25641d2e2df3)
+
+
 ## Architecture
 The architecture of the Property Management App follows a layered approach, separating concerns for maintainability and scalability. Here’s a breakdown of the key components:
 
@@ -38,6 +45,10 @@ The architecture of the Property Management App follows a layered approach, sepa
 
 5. **Deployment**:
    - The application is deployed on Amazon EC2, leveraging the cloud infrastructure for scalability and availability. The backend runs on one instance, while the MySQL database runs on another, ensuring separation of concerns and enhanced security.
+  
+### Diagram
+   ![image](https://github.com/user-attachments/assets/97fc77ac-535e-4ce2-9477-146e1d9e32bb)
+
 
 ## Technologies Used
 - **Backend**: Java Spring Boot, JPA, Hibernate
