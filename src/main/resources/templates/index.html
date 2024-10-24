@@ -6,27 +6,59 @@
     <title>Property Management</title>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Implementación de Content Security Policy (CSP) -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com;">
+
     <script>
         async function fetchProperties() {
             const response = await fetch('/properties');
             const properties = await response.json();
             const propertyList = document.getElementById('property-list');
-            propertyList.innerHTML = '';
+            propertyList.innerHTML = ''; // Limpiamos el contenido anterior
+
+            // Creamos los elementos de manera segura usando createElement
             properties.forEach(property => {
-                propertyList.innerHTML += `
-                    <li>
-                        <div class="property-info">
-                            <strong>Address:</strong> ${property.address} <br>
-                            <strong>Price:</strong> $${property.price} <br>
-                            <strong>Size:</strong> ${property.size} sqft <br>
-                            <strong>Description:</strong> ${property.description}
-                        </div>
-                        <div class="property-buttons">
-                            <button onclick="editProperty(${property.id})"><i class="fas fa-edit"></i> Edit</button>
-                            <button onclick="deleteProperty(${property.id})"><i class="fas fa-trash-alt"></i> Delete</button>
-                        </div>
-                    </li>
-                `;
+                const li = document.createElement('li');
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'property-info';
+
+                const address = document.createElement('strong');
+                address.textContent = 'Address:';
+                infoDiv.appendChild(address);
+                infoDiv.append(` ${property.address} `);
+
+                const price = document.createElement('strong');
+                price.textContent = 'Price:';
+                infoDiv.appendChild(price);
+                infoDiv.append(` $${property.price} `);
+
+                const size = document.createElement('strong');
+                size.textContent = 'Size:';
+                infoDiv.appendChild(size);
+                infoDiv.append(` ${property.size} sqft `);
+
+                const description = document.createElement('strong');
+                description.textContent = 'Description:';
+                infoDiv.appendChild(description);
+                infoDiv.append(` ${property.description} `);
+
+                const buttonDiv = document.createElement('div');
+                buttonDiv.className = 'property-buttons';
+
+                const editButton = document.createElement('button');
+                editButton.innerHTML = '<i class="fas fa-edit"></i> Edit';
+                editButton.onclick = () => editProperty(property.id);
+                buttonDiv.appendChild(editButton);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i> Delete';
+                deleteButton.onclick = () => deleteProperty(property.id);
+                buttonDiv.appendChild(deleteButton);
+
+                li.appendChild(infoDiv);
+                li.appendChild(buttonDiv);
+                propertyList.appendChild(li);
             });
         }
 
@@ -41,9 +73,8 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ address, price, size, description })
             });
-            console.log(JSON.stringify({ address, price, size, description }));
             fetchProperties();
-            document.querySelector("form").reset();
+            document.querySelector("form").reset(); // Reseteamos el formulario
         }
 
         async function editProperty(id) {
