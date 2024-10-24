@@ -1,13 +1,9 @@
 package edu.escuelaing.arep.jpa;
 
-import edu.escuelaing.arep.jpa.entities.Customer;
-import edu.escuelaing.arep.jpa.repositories.CustomerRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 
 
 @SpringBootApplication
