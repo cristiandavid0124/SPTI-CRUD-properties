@@ -23,7 +23,7 @@ public class PropertyController {
     }
 
     @GetMapping("/{id}")
-    public Property getPropertyById(long id) {
+    public Property getPropertyById(@PathVariable long id) {
         return propertyRepository.findById(id);
     }
 
