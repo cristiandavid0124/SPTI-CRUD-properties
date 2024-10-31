@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.32</version> <!-- O la versión que prefieras -->
+			<version>8.0.33</version> <!-- O la versión que prefieras -->
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
 		<dependency>
